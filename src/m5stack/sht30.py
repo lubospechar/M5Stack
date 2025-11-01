@@ -1,4 +1,5 @@
 """Driver for the Sensirion SHT30 temperature and humidity sensor."""
+import random
 import time
 from dataclasses import dataclass
 from typing import Callable, Any, Protocol, runtime_checkable
@@ -96,14 +97,30 @@ class SHT30:
         return raw_to_humidity(humidity_raw)
 
 
-# --- Optional CLI Smoke Test --------------------------------------------------
+@dataclass(slots=True)
+class SHT30Fake:
+    """Fake SHT30 sensor"""
 
-if __name__ == "__main__":
-    # Adjust bus_number for your system or stub bus
-    sensor = SHT30(bus_number=16, address=0x44)
-    try:
-        temperature, humidity = sensor.read()
-        print(f"Temperature: {temperature:.2f} °C")
-        print(f"Humidity:    {humidity:.1f} %")
-    except SHT30Error as error:
-        print("SHT30Error:", error)
+
+    temperature: float = 25.0
+    humidity: float = 50.0
+    temperature_sigma: float = 0.2
+    humidity_sigma: float = 1.0
+
+    def _rand_temperature(self) -> float:
+        t = random.gauss(self.temperature, self.temperature_sigma)
+        return max(-40.0, min(125.0, t))
+
+    def _rand_humidity(self) -> float:
+        h = random.gauss(self.humidity, self.humidity_sigma)
+        return max(0.0, min(100.0, h))
+
+    def read(self) -> tuple[float, float]:
+        return self._rand_temperature(), self._rand_humidity()
+
+    def read_temperature(self) -> float:
+        return self._rand_temperature()
+
+    def read_humidity(self) -> float:
+        return self._rand_humidity()
+

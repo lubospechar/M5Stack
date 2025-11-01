@@ -2,6 +2,8 @@
 
 
 import time
+import random
+
 from dataclasses import dataclass
 from typing import Callable, Any, Protocol, runtime_checkable
 
@@ -89,7 +91,6 @@ class QMP6988:
         except OSError as error:
             raise QMP6988Error(f"I2C communication failed: {error}") from error
 
-    # --- Public API -----------------------------------------------------------
 
     def read_pressure(self) -> float:
         """Read and return pressure in Pascals (Pa)."""
@@ -97,3 +98,11 @@ class QMP6988:
         raw = parse_pressure_frame(frame)  # 3-byte frame -> 24-bit raw
         return raw_to_pascal(raw, self.coef_a, self.coef_b)
 
+
+@dataclass(slots=True)
+class QMP6988Fake:
+    """Fake QMP6988 sensor for testing."""
+
+    def read_pressure(self) -> float:
+        """Read and return pressure in Pascals (Pa)."""
+        return random.uniform(98_000.0, 103_000.0)
