@@ -84,17 +84,17 @@ class SHT30:
     def read(self) -> tuple[float, float]:
         """Read both temperature (°C) and relative humidity (%RH)."""
         temperature_raw, humidity_raw = self._measure_raw()
-        return raw_to_celsius(temperature_raw), raw_to_humidity(humidity_raw)
+        return round(raw_to_celsius(temperature_raw), 2), round(raw_to_humidity(humidity_raw), 2)
 
     def read_temperature(self) -> float:
         """Read only temperature in Celsius."""
         temperature_raw, _ = self._measure_raw()
-        return raw_to_celsius(temperature_raw)
+        return round(raw_to_celsius(temperature_raw), 2)
 
     def read_humidity(self) -> float:
         """Read only relative humidity in percent."""
         _, humidity_raw = self._measure_raw()
-        return raw_to_humidity(humidity_raw)
+        return round(raw_to_humidity(humidity_raw), 2)
 
 
 @dataclass(slots=True)
