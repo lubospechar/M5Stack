@@ -96,7 +96,7 @@ class QMP6988:
         """Read and return pressure in Pascals (Pa)."""
         frame = self._read_frame()
         raw = parse_pressure_frame(frame)  # 3-byte frame -> 24-bit raw
-        return round(raw_to_pascal(raw, self.coef_a, self.coef_b))
+        return round(raw_to_pascal(raw, self.coef_a, self.coef_b), 0)
 
 
 @dataclass(slots=True)
